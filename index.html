@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giusy Grieco — Project Manager & Policy Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f7f4ef;
+  --bg2: #edeae3;
+  --ink: #1a1814;
+  --ink-mid: #6b6760;
+  --ink-light: #b0ada6;
+  --accent: #2d5a3d;
+  --accent2: #c84b2f;
+  --accent3: #1e3a5f;
+  --line: rgba(26,24,20,0.12);
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --mono: 'DM Mono', 'Courier New', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── CURSOR ── */
+#cursor {
+  position: fixed;
+  width: 8px; height: 8px;
+  background: var(--accent2);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .15s, height .15s, background .2s;
+  mix-blend-mode: multiply;
+}
+#cursor.big { width: 36px; height: 36px; background: var(--accent); }
+
+/* ── GRAIN ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.5;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.4rem 3rem;
+  background: rgba(247,244,239,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-name {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  text-decoration: none;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-cta {
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.25rem;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+  transition: all .2s;
+}
+.nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: 80px;
+}
+.hero-left {
+  padding: 6rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--line);
+}
+.hero-tag {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: up .7s .2s forwards;
+}
+.hero-name {
+  font-family: var(--serif);
+  font-size: clamp(3.5rem, 6vw, 6rem);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  opacity: 0;
+  animation: up .7s .35s forwards;
+}
+.hero-name em { font-style: italic; color: var(--accent); }
+.hero-role {
+  margin-top: 2.5rem;
+  font-size: 0.75rem;
+  color: var(--ink-mid);
+  line-height: 2;
+  max-width: 380px;
+  opacity: 0;
+  animation: up .7s .5s forwards;
+}
+.hero-role strong { color: var(--ink); font-weight: 400; }
+.hero-actions {
+  margin-top: 3rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: up .7s .65s forwards;
+}
+.btn {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  transition: all .2s;
+  display: inline-block;
+  cursor: none;
+}
+.btn-solid { background: var(--ink); color: var(--bg); }
+.btn-solid:hover { background: var(--accent); }
+.btn-outline { border: 1px solid var(--line); color: var(--ink-mid); }
+.btn-outline:hover { border-color: var(--ink); color: var(--ink); }
+
+.hero-right {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--bg2);
+}
+
+/* ── SECTIONS ── */
+section { position: relative; }
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+.section-num { font-size: 0.55rem; letter-spacing: 0.2em; color: var(--ink-light); }
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 300;
+  line-height: 1.1;
+}
+.section-title em { font-style: italic; color: var(--accent); }
+
+/* ── PROFILO ── */
+#profilo {
+  padding: 8rem 3rem;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 6rem;
+  border-top: 1px solid var(--line);
+}
+.profilo-left { padding-top: 0.5rem; }
+.profilo-left .section-header { flex-direction: column; gap: 0.5rem; margin-bottom: 2rem; }
+
+.bio-text {
+  font-size: 1.05rem;
+  font-family: var(--serif);
+  line-height: 1.85;
+  color: var(--ink-mid);
+}
+.bio-text strong { color: var(--ink); font-weight: 600; }
+.bio-text em { font-style: italic; color: var(--accent3); }
+
+.data-points {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem 2rem;
+}
+.dp-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin-bottom: 0.3rem;
+}
+.dp-val {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 300;
+}
+
+/* ── SERVIZI ── */
+#servizi {
+  padding: 8rem 3rem;
+  background: var(--bg2);
+  border-top: 1px solid var(--line);
+}
+.servizi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  margin-top: 4rem;
+}
+.servizio {
+  background: var(--bg2);
+  padding: 3rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: background .3s;
+}
+.servizio:hover { background: var(--bg); }
+.servizio::before {
+  content: attr(data-num);
+  position: absolute;
+  top: 1.5rem; right: 2rem;
+  font-family: var(--serif);
+  font-size: 5rem;
+  color: rgba(26,24,20,0.04);
+  line-height: 1;
+}
+.serv-icon { width: 2rem; height: 2px; background: var(--accent); margin-bottom: 2rem; }
+.servizio h3 {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 300;
+  line-height: 1.25;
+  margin-bottom: 1.25rem;
+}
+.servizio p { font-size: 0.72rem; line-height: 2; color: var(--ink-mid); }
+.serv-tags { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.tag {
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--line);
+  color: var(--ink-mid);
+}
+.tag.albo { border-color: rgba(45,90,61,0.45); color: var(--accent); }
+
+/* ── PROGETTI ── */
+#progetti { padding: 8rem 3rem; border-top: 1px solid var(--line); }
+.progetto {
+  display: grid;
+  grid-template-columns: 120px 1fr 200px;
+  gap: 2rem 3rem;
+  align-items: start;
+  padding: 2.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.progetto:first-child { border-top: 1px solid var(--line); }
+.progetto-period { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--ink-light); padding-top: 0.3rem; }
+.progetto-body h3 { font-family: var(--serif); font-size: 1.4rem; font-weight: 300; margin-bottom: 0.5rem; }
+.progetto-body h3 em { font-style: italic; color: var(--accent3); }
+.progetto-role { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+.progetto-body p { font-size: 0.72rem; line-height: 2; color: var(--ink-mid); }
+.progetto-meta { text-align: right; padding-top: 0.3rem; }
+.progetto-scope {
+  display: inline-block;
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.8rem;
+  background: var(--accent3);
+  color: white;
+  margin-bottom: 0.75rem;
+}
+.progetto-geo { font-size: 0.6rem; color: var(--ink-light); line-height: 1.8; }
+
+/* ── MAGNET ── */
+#magnet {
+  padding: 8rem 3rem;
+  background: var(--accent3);
+  color: white;
+  border-top: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+#magnet::before {
+  content: 'MAGNET';
+  position: absolute;
+  right: -2%; top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--serif);
+  font-size: clamp(8rem, 18vw, 18rem);
+  font-weight: 300;
+  color: rgba(255,255,255,0.04);
+  white-space: nowrap;
+  letter-spacing: -0.05em;
+  user-select: none;
+}
+.magnet-inner {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+.magnet-text .section-num { color: rgba(255,255,255,0.4); }
+.magnet-text .section-title { color: white; }
+.magnet-text .section-title em { color: #7dd3a8; }
+.magnet-text p { margin-top: 2rem; font-size: 0.75rem; line-height: 2.1; color: rgba(255,255,255,0.65); max-width: 420px; }
+
+.magnet-checklist { list-style: none; }
+.magnet-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.72rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.75);
+}
+.magnet-checklist li:first-child { border-top: 1px solid rgba(255,255,255,0.1); }
+.check-icon {
+  flex-shrink: 0;
+  width: 18px; height: 18px;
+  border: 1px solid #7dd3a8;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+}
+.check-icon::after { content: '✓'; font-size: 0.55rem; color: #7dd3a8; }
+.magnet-checklist strong { display: block; color: white; font-weight: 400; margin-bottom: 0.25rem; font-size: 0.75rem; }
+
+/* ── COMPETENZE ── */
+#competenze {
+  padding: 8rem 3rem;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+}
+.comp-group { margin-bottom: 3rem; }
+.comp-group-title {
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+.comp-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.comp-name { font-size: 0.72rem; color: var(--ink-mid); }
+.comp-bar-wrap { width: 80px; height: 3px; background: rgba(26,24,20,0.08); }
+.comp-bar {
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 1.2s cubic-bezier(0.16,1,0.3,1);
+}
+
+.pub-list { list-style: none; }
+.pub-item { padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
+.pub-item:first-child { border-top: 1px solid var(--line); }
+.pub-title { font-family: var(--serif); font-size: 1rem; font-weight: 300; font-style: italic; margin-bottom: 0.4rem; line-height: 1.4; }
+.pub-meta { font-size: 0.6rem; color: var(--ink-light); letter-spacing: 0.05em; }
+.pub-link { font-size: 0.6rem; color: var(--accent); text-decoration: none; display: inline-block; margin-top: 0.5rem; }
+
+.lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; }
+.lang-item { padding: 1.25rem; border: 1px solid var(--line); text-align: center; }
+.lang-code { font-family: var(--serif); font-size: 1.5rem; font-weight: 300; margin-bottom: 0.25rem; }
+.lang-level { font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
+.lang-item.native { background: var(--accent); border-color: var(--accent); }
+.lang-item.native .lang-code, .lang-item.native .lang-level { color: white; }
+
+/* ── CONTATTI ── */
+#contatti { padding: 8rem 3rem; background: var(--ink); color: var(--bg); border-top: 1px solid var(--line); }
+.contatti-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+.contatti-title { font-family: var(--serif); font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 300; line-height: 1; margin-bottom: 2rem; }
+.contatti-title em { font-style: italic; color: #7dd3a8; }
+.contatti-sub { font-size: 0.75rem; line-height: 2; color: rgba(247,244,239,0.5); max-width: 380px; }
+.contatti-links { list-style: none; }
+.contatti-links li {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid rgba(247,244,239,0.1);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.contatti-links li:first-child { border-top: 1px solid rgba(247,244,239,0.1); }
+.contact-label { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(247,244,239,0.35); }
+.contact-val { font-family: var(--serif); font-size: 1rem; font-weight: 300; color: var(--bg); text-decoration: none; transition: color .2s; }
+.contact-val:hover { color: #7dd3a8; }
+
+/* ── FOOTER ── */
+footer {
+  padding: 2rem 3rem;
+  background: var(--ink);
+  border-top: 1px solid rgba(247,244,239,0.08);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-copy { font-size: 0.6rem; color: rgba(247,244,239,0.3); letter-spacing: 0.1em; }
+
+/* ── ANIMATIONS ── */
+@keyframes up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s, transform .8s cubic-bezier(0.16,1,0.3,1); }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  #hero { grid-template-columns: 1fr; }
+  .hero-right { height: 280px; }
+  .hero-left { padding: 5rem 1.5rem; }
+  #profilo, .magnet-inner, .contatti-inner, #competenze { grid-template-columns: 1fr; gap: 3rem; }
+  .servizi-grid { grid-template-columns: 1fr; }
+  .progetto { grid-template-columns: 1fr; }
+  .progetto-meta { text-align: left; }
+  #profilo, #servizi, #progetti, #magnet, #competenze, #contatti { padding: 5rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<nav>
+  <a href="#" class="nav-name">Giusy Grieco</a>
+  <ul class="nav-links">
+    <li><a href="#profilo">Profilo</a></li>
+    <li><a href="#servizi">Servizi</a></li>
+    <li><a href="#progetti">Progetti</a></li>
+    <li><a href="#magnet">ART-ER</a></li>
+    <li><a href="#competenze">Competenze</a></li>
+    <li><a href="#contatti">Contatti</a></li>
+  </ul>
+  <a href="mailto:giusy.grieco.info@gmail.com" class="nav-cta">Scrivimi</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-left">
+    <p class="hero-tag">Project Manager · Policy Designer · Bologna</p>
+    <h1 class="hero-name">Giusy<br><em>Grieco</em></h1>
+    <p class="hero-role">
+      <strong>Gestione di progetti europei e territoriali</strong> all'incrocio tra innovazione, sviluppo locale e knowledge valorisation.<br><br>
+      Digital humanities, facilitazione partecipativa, analisi di sistemi organizzativi distribuiti e policy design in contesti internazionali.
+    </p>
+    <div class="hero-actions">
+      <a href="#progetti" class="btn btn-solid">→ Progetti</a>
+      <a href="mailto:giusy.grieco.info@gmail.com" class="btn btn-outline">Scrivimi</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <canvas id="system-canvas"></canvas>
+  </div>
+</section>
+
+<section id="profilo">
+  <div class="profilo-left reveal">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Chi<br><em>sono</em></h2>
+    </div>
+    <div class="data-points">
+      <div class="dp-item"><div class="dp-label">Sede</div><div class="dp-val">Bologna</div></div>
+      <div class="dp-item"><div class="dp-label">Inglese</div><div class="dp-val">C2</div></div>
+      <div class="dp-item"><div class="dp-label">Progetti EU</div><div class="dp-val">4+</div></div>
+      <div class="dp-item"><div class="dp-label">Paesi</div><div class="dp-val">IT DE CH FR SE ES</div></div>
+    </div>
+  </div>
+  <div class="reveal">
+    <p class="bio-text">Lavoro da anni al confine tra <strong>gestione di progetti europei</strong>, progettazione di politiche e comunicazione della conoscenza. Ho coordinato work package Horizon Europe in ecosistemi urbani distribuiti tra Bologna, Barcellona, Karlstad e Lorraine, gestendo stakeholder istituzionali, università e cluster di innovazione.</p>
+    <br><br>
+    <p class="bio-text">Il mio approccio è <em>sistemico e multidisciplinare</em>: so tradurre framework normativi complessi in strumenti operativi — policy brief, report, dataset strutturati, sessioni partecipative. Ho facilitato workshop e study visit in Italia e all'estero, producendo deliverable per processi decisionali a scala territoriale.</p>
+    <br><br>
+    <p class="bio-text">La formazione in <strong>Digital Humanities e Sociologia dei Nuovi Media</strong> (Università di Bologna) mi permette di portare rigore metodologico, capacità di analisi qualitativa e orientamento alla comunicazione pubblica in ogni contesto progettuale.</p>
+  </div>
+</section>
+
+<section id="servizi">
+  <div class="section-header reveal">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Cosa<br><em>faccio</em></h2>
+  </div>
+  <div class="servizi-grid">
+
+    <div class="servizio reveal" data-num="1">
+      <div class="serv-icon"></div>
+      <h3>Progettazione &amp; Project Management</h3>
+      <p>Coordinamento di progetti europei complessi (Horizon Europe, Interreg) con gestione integrata di work package, milestone, deliverable, documentazione e reporting istituzionale a più livelli.</p>
+      <div class="serv-tags">
+        <span class="tag albo">3.e · Project Management</span>
+        <span class="tag albo">3.c · Monitoraggio</span>
+        <span class="tag">Horizon EU</span>
+        <span class="tag">Interreg</span>
+      </div>
+    </div>
+
+    <div class="servizio reveal" data-num="2" style="transition-delay:.08s">
+      <div class="serv-icon"></div>
+      <h3>Governance dello Sviluppo Territoriale</h3>
+      <p>Supporto alla programmazione e governance di ecosistemi territoriali di innovazione. Analisi di contesti multi-attore, mappatura stakeholder pubblici e privati, costruzione di framework operativi per decisori istituzionali.</p>
+      <div class="serv-tags">
+        <span class="tag albo">2.d · Governance territoriale</span>
+        <span class="tag">Knowledge Val.</span>
+        <span class="tag">Ecosistemi urbani</span>
+      </div>
+    </div>
+
+    <div class="servizio reveal" data-num="3" style="transition-delay:.16s">
+      <div class="serv-icon"></div>
+      <h3>Politiche per la Ricerca &amp; l'Innovazione</h3>
+      <p>Traduzione di framework normativi europei in strumenti operativi: policy brief, linee guida, white paper e dataset per sistemi di autovalutazione. Comunicazione di risultati di ricerca per pubblici non specialistici.</p>
+      <div class="serv-tags">
+        <span class="tag albo">2.e · Politiche R&amp;I</span>
+        <span class="tag albo">7.h · Comunicazione R&amp;I</span>
+        <span class="tag">Policy Brief</span>
+      </div>
+    </div>
+
+    <div class="servizio reveal" data-num="4" style="transition-delay:.24s">
+      <div class="serv-icon"></div>
+      <h3>Marketing Territoriale &amp; Attrazione Talenti</h3>
+      <p>Supporto a strategie di attrattività regionale: analisi di ecosistemi locali, sviluppo di narrative territoriali, produzione di materiali per il posizionamento di hub di innovazione verso talenti e investitori.</p>
+      <div class="serv-tags">
+        <span class="tag albo">2.g · Marketing territoriale</span>
+        <span class="tag">Talent attraction</span>
+        <span class="tag">Hub innovazione</span>
+      </div>
+    </div>
+
+    <div class="servizio reveal" data-num="5" style="transition-delay:.08s">
+      <div class="serv-icon"></div>
+      <h3>Cooperazione Europea &amp; Politiche UE</h3>
+      <p>Gestione operativa di progetti di cooperazione territoriale europea. Conoscenza diretta dei regolamenti Horizon Europe e Interreg, dei meccanismi di rendicontazione e delle logiche di coesione territoriale UE.</p>
+      <div class="serv-tags">
+        <span class="tag albo">5.a · Cooperazione territoriale</span>
+        <span class="tag albo">5.b · Politiche UE</span>
+        <span class="tag">6 paesi EU</span>
+      </div>
+    </div>
+
+    <div class="servizio reveal" data-num="6" style="transition-delay:.16s">
+      <div class="serv-icon"></div>
+      <h3>Open Innovation &amp; Service Design</h3>
+      <p>Progettazione e facilitazione di percorsi di co-design, laboratori formativi e sessioni partecipative. Organizzazione di workshop, study visit ed eventi multi-attore con università, cluster e istituzioni pubbliche.</p>
+      <div class="serv-tags">
+        <span class="tag albo">7.c · Open innovation</span>
+        <span class="tag albo">7.d · Service design</span>
+        <span class="tag">Facilitazione</span>
+        <span class="tag">Co-design</span>
+      </div>
+    </div>
+
+    <div class="servizio reveal" data-num="7" style="transition-delay:.24s">
+      <div class="serv-icon"></div>
+      <h3>Data Visualization &amp; Analisi Dati</h3>
+      <p>Raccolta e analisi di dati qualitativi e quantitativi a supporto di strategie territoriali. Produzione di dashboard, report visuali e presentazioni per decision-maker istituzionali. Strumenti: Python, Power BI.</p>
+      <div class="serv-tags">
+        <span class="tag albo">8.f · Datavisualization</span>
+        <span class="tag albo">8.e · Data scientist</span>
+        <span class="tag">Python</span>
+        <span class="tag">Power BI</span>
+      </div>
+    </div>
+
+    <div class="servizio reveal" data-num="8" style="transition-delay:.32s">
+      <div class="serv-icon"></div>
+      <h3>Presentazioni Pubbliche &amp; Moderazione</h3>
+      <p>Conduzione di eventi, moderazione di tavoli multi-stakeholder e sessioni pubbliche. Coaching individuale e percorsi di consulenza continuativa. Redazione bilingue IT/EN di contenuti istituzionali e divulgativi.</p>
+      <div class="serv-tags">
+        <span class="tag albo">8.h · Presentazioni/pitch</span>
+        <span class="tag albo">8.m · Moderazione eventi</span>
+        <span class="tag">IT / EN C2</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="progetti">
+  <div class="section-header reveal">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Progetti<br><em>selezionati</em></h2>
+  </div>
+  <div class="progetti-list">
+
+    <div class="progetto reveal">
+      <div class="progetto-period">2025–2026<br>In corso</div>
+      <div class="progetto-body">
+        <div class="progetto-role">Data Analyst PMO</div>
+        <h3><em>Neverhack Italy</em> · Unipol Tech</h3>
+        <p>Supporto alla gestione operativa di progetti complessi in contesti corporate IT e Analytics. Monitoraggio avanzamento attività, deliverable e governance progettuale. Analisi dati e produzione di report a supporto decisionale. Coordinamento tra stakeholder tecnici e business.</p>
+      </div>
+      <div class="progetto-meta">
+        <div class="progetto-scope">Corporate · PMO</div>
+        <div class="progetto-geo">Bologna · Milano</div>
+      </div>
+    </div>
+
+    <div class="progetto reveal">
+      <div class="progetto-period">2024–2025</div>
+      <div class="progetto-body">
+        <div class="progetto-role">Project Manager · Facilitatrice Workshop</div>
+        <h3><em>KALEIDOS</em> Horizon Europe</h3>
+        <p>Gestione del Work Package Bologna focalizzato sul policy making per ecosistemi di knowledge valorisation. Coordinamento attività su 4 città europee (Barcellona, Karlstad, Lorraine, Bologna). Traduzione di quadri normativi in policy brief, deliverable e dataset per sistemi di autovalutazione. Organizzazione e facilitazione di workshop e study visit in Italia e all'estero.</p>
+      </div>
+      <div class="progetto-meta">
+        <div class="progetto-scope">Horizon EU</div>
+        <div class="progetto-geo">Bologna · Barcelona<br>Karlstad · Lorraine</div>
+      </div>
+    </div>
+
+    <div class="progetto reveal">
+      <div class="progetto-period">2023–2024</div>
+      <div class="progetto-body">
+        <div class="progetto-role">Information Architect · Facilitatrice</div>
+        <h3><em>IN-HABIT</em> Horizon 2020 · Lucca</h3>
+        <p>Ricerca accademica sulla relazione tra persone, natura e sviluppo urbano sostenibile. Facilitazione di sessioni di ricerca-azione. Produzione di policy briefs, linee guida istruttive e documentazione bilingue IT/EN per stakeholder internazionali. Collaborazione con Tesserae Berlin.</p>
+      </div>
+      <div class="progetto-meta">
+        <div class="progetto-scope">Horizon 2020</div>
+        <div class="progetto-geo">Berlin · Lucca</div>
+      </div>
+    </div>
+
+    <div class="progetto reveal">
+      <div class="progetto-period">2021–2022</div>
+      <div class="progetto-body">
+        <div class="progetto-role">Product Manager</div>
+        <h3><em>PERCEIVE / MACRO</em> Horizon EU</h3>
+        <p>Sviluppo di framework, wireframe e contenuti per la comunicazione della mission del progetto. Collaborazione con ricercatori dell'Università di Lucerna per tradurre concetti di politica in comunicazione pubblica accessibile. Gestione della precisione terminologica per pubblicazioni open source su Zenodo.</p>
+      </div>
+      <div class="progetto-meta">
+        <div class="progetto-scope">Horizon EU</div>
+        <div class="progetto-geo">Luzern, CH</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="magnet">
+  <div class="magnet-inner">
+    <div class="magnet-text reveal">
+      <div class="section-header" style="margin-bottom:0">
+        <span class="section-num">04</span>
+        <h2 class="section-title">Perché<br><em>MAGNET</em></h2>
+      </div>
+      <p>Il progetto Interreg Europe MAGNET — focalizzato sull'attrattività di talenti e investimenti nei hub regionali — richiede esattamente il profilo costruito in quattro anni di progetti europei: gestione multi-stakeholder, produzione documentale, facilitazione e sviluppo territoriale.</p>
+    </div>
+    <ul class="magnet-checklist reveal">
+      <li>
+        <div class="check-icon"></div>
+        <div><strong>Report, presentazioni &amp; gestione documentale</strong>Policy brief, deliverable Horizon, white paper su Zenodo. Esperienza diretta con documentazione istituzionale IT/EN.</div>
+      </li>
+      <li>
+        <div class="check-icon"></div>
+        <div><strong>Stakeholder engagement &amp; workshop</strong>Organizzazione di sessioni partecipative, study visit ed eventi in Italia, Germania, Svezia, Francia, Spagna e Svizzera.</div>
+      </li>
+      <li>
+        <div class="check-icon"></div>
+        <div><strong>Sviluppo economico e territoriale</strong>Knowledge valorisation, ecosistemi di innovazione e attrattività — core dei progetti KALEIDOS e IN-HABIT.</div>
+      </li>
+      <li>
+        <div class="check-icon"></div>
+        <div><strong>Analisi dati a supporto decisionale</strong>Python, Power BI, raccolta dati qualitativi, dataset strutturati. Esperienza PMO con Neverhack/Unipol Tech.</div>
+      </li>
+      <li>
+        <div class="check-icon"></div>
+        <div><strong>Laurea + Inglese C2</strong>MA Digital Humanities &amp; Knowledge, Università di Bologna. Inglese certificato C2 scritto e orale.</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section id="competenze">
+  <div>
+    <div class="section-header reveal">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Compe<em>tenze</em></h2>
+    </div>
+    <div class="comp-group reveal">
+      <div class="comp-group-title">Project Management</div>
+      <div class="comp-item"><span class="comp-name">EU Project Coordination</span><div class="comp-bar-wrap"><div class="comp-bar" style="--w:.92"></div></div></div>
+      <div class="comp-item"><span class="comp-name">Gestione documentale</span><div class="comp-bar-wrap"><div class="comp-bar" style="--w:.88"></div></div></div>
+      <div class="comp-item"><span class="comp-name">Stakeholder Management</span><div class="comp-bar-wrap"><div class="comp-bar" style="--w:.9"></div></div></div>
+      <div class="comp-item"><span class="comp-name">Monitoraggio milestone</span><div class="comp-bar-wrap"><div class="comp-bar" style="--w:.85"></div></div></div>
+    </div>
+    <div class="comp-group reveal">
+      <div class="comp-group-title">Analisi &amp; Strumenti</div>
+      <div class="comp-item"><span class="comp-name">Python</span><div class="comp-bar-wrap"><div class="comp-bar" style="--w:.7"></div></div></div>
+      <div class="comp-item"><span class="comp-name">Power BI</span><div class="comp-bar-wrap"><div class="comp-bar" style="--w:.72"></div></div></div>
+      <div class="comp-item"><span class="comp-name">Google Drive / Office Suite</span><div class="comp-bar-wrap"><div class="comp-bar" style="--w:.95"></div></div></div>
+      <div class="comp-item"><span class="comp-name">Asana · Trello · Slack</span><div class="comp-bar-wrap"><div class="comp-bar" style="--w:.88"></div></div></div>
+    </div>
+    <div class="comp-group reveal">
+      <div class="comp-group-title">Lingue</div>
+      <div class="lang-grid">
+        <div class="lang-item native"><div class="lang-code">IT</div><div class="lang-level">Madrelingua</div></div>
+        <div class="lang-item"><div class="lang-code">EN</div><div class="lang-level">C2</div></div>
+        <div class="lang-item"><div class="lang-code">ES</div><div class="lang-level">A2</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-header reveal">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Pubblica<em>zioni</em></h2>
+    </div>
+    <ul class="pub-list reveal">
+      <li class="pub-item">
+        <div class="pub-title">D4.1 — Policy Guidelines Report</div>
+        <div class="pub-meta">Meoli, A., &amp; Grieco, G. (2025) · Zenodo · KALEIDOS Horizon Europe</div>
+        <a href="https://doi.org/10.5281/zenodo.17909495" target="_blank" class="pub-link">↗ zenodo.org/10.5281/zenodo.17909495</a>
+      </li>
+      <li class="pub-item">
+        <div class="pub-title">Adaptive Horizons: Navigating Museums in a Post-Pandemic World</div>
+        <div class="pub-meta">Clay, A., Giusy, G., Chiara Gemma, F., &amp; Lanfranconi, D. (2023) · Zenodo · PERCEIVE</div>
+        <a href="https://doi.org/10.5281/zenodo.10458408" target="_blank" class="pub-link">↗ zenodo.org/10.5281/zenodo.10458408</a>
+      </li>
+    </ul>
+    <div class="comp-group reveal" style="margin-top:3rem">
+      <div class="comp-group-title">Formazione</div>
+      <div class="comp-item" style="flex-direction:column;align-items:flex-start;gap:.25rem;">
+        <div style="font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-light)">2022</div>
+        <div style="font-family:var(--serif);font-size:1rem;font-weight:300">MA Digital Humanities &amp; Digital Knowledge</div>
+        <div style="font-size:.65rem;color:var(--ink-light)">Università di Bologna</div>
+      </div>
+      <div class="comp-item" style="flex-direction:column;align-items:flex-start;gap:.25rem;border-bottom:none;">
+        <div style="font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-light)">Precedente</div>
+        <div style="font-family:var(--serif);font-size:1rem;font-weight:300">BA Sociologia dei Nuovi Media</div>
+        <div style="font-size:.65rem;color:var(--ink-light)">ABANA, Napoli</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contatti">
+  <div class="contatti-inner">
+    <div class="reveal">
+      <h2 class="contatti-title">Lavoriamo<br><em>insieme</em></h2>
+      <p class="contatti-sub">Disponibile per progetti di cooperazione europea, consulenza territoriale, facilitazione e formazione. Apertura immediata a incarichi nel Nord Italia e in contesti internazionali.</p>
+    </div>
+    <ul class="contatti-links reveal">
+      <li><span class="contact-label">Email</span><a href="mailto:giusy.grieco.info@gmail.com" class="contact-val">giusy.grieco.info@gmail.com</a></li>
+      <li><span class="contact-label">PEC</span><a href="mailto:giusygrieco@pec.it" class="contact-val">giusygrieco@pec.it</a></li>
+      <li><span class="contact-label">Telefono</span><a href="tel:+393396187260" class="contact-val">+39 339 618 7260</a></li>
+      <li><span class="contact-label">LinkedIn</span><a href="https://linkedin.com/in/giusy-grieco-101612202/" target="_blank" class="contact-val">giusy-grieco-101612202</a></li>
+      <li><span class="contact-label">Sede</span><span class="contact-val">Bologna, Italia</span></li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-copy">© 2026 Giusy Grieco · Bologna</span>
+  <span class="footer-copy">Project Management · Policy Design · Digital Humanities</span>
+</footer>
+
+<script>
+// Cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a, button, .servizio, .progetto').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+});
+
+// Reveal on scroll
+const ro = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 60);
+      ro.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+// Competenze bars
+const barObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const w = getComputedStyle(e.target).getPropertyValue('--w');
+      e.target.style.transform = `scaleX(${parseFloat(w) || 0.8})`;
+      barObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.comp-bar').forEach(el => barObs.observe(el));
+
+// System Map Canvas
+const canvas = document.getElementById('system-canvas');
+const heroRight = document.querySelector('.hero-right');
+const dpr = window.devicePixelRatio || 1;
+
+function setupCanvas() {
+  canvas.width = heroRight.clientWidth * dpr;
+  canvas.height = heroRight.clientHeight * dpr;
+  canvas.style.width = heroRight.clientWidth + 'px';
+  canvas.style.height = heroRight.clientHeight + 'px';
+}
+setupCanvas();
+window.addEventListener('resize', setupCanvas);
+
+const ctx = canvas.getContext('2d');
+
+const NODES = [
+  { label: 'KALEIDOS',  x:.50, y:.28, r:28, color:'#2d5a3d' },
+  { label: 'IN-HABIT',  x:.22, y:.52, r:22, color:'#1e3a5f' },
+  { label: 'PERCEIVE',  x:.72, y:.58, r:20, color:'#1e3a5f' },
+  { label: 'Neverhack', x:.78, y:.28, r:18, color:'#6b6760' },
+  { label: 'Policy',    x:.30, y:.25, r:14, color:'#c84b2f' },
+  { label: 'Data',      x:.65, y:.72, r:14, color:'#c84b2f' },
+  { label: 'Facilit.',  x:.18, y:.72, r:12, color:'#6b6760' },
+  { label: 'Bologna',   x:.50, y:.62, r:10, color:'#6b6760' },
+  { label: 'EU',        x:.42, y:.44, r: 8, color:'#2d5a3d' },
+];
+const EDGES = [[0,1],[0,2],[0,3],[0,4],[0,8],[1,6],[1,7],[2,5],[2,8],[3,5],[4,8],[5,7],[6,7]];
+
+let t = 0;
+function drawMap() {
+  const W = canvas.width / dpr;
+  const H = canvas.height / dpr;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.scale(dpr, dpr);
+
+  ctx.fillStyle = '#edeae3';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = 'rgba(26,24,20,0.04)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  const nodes = NODES.map((n, i) => ({
+    ...n,
+    cx: n.x * W + Math.sin(t * 0.4 + i * 1.3) * 5,
+    cy: n.y * H + Math.cos(t * 0.3 + i * 0.9) * 4,
+  }));
+
+  EDGES.forEach(([a, b]) => {
+    const na = nodes[a], nb = nodes[b];
+    const g = ctx.createLinearGradient(na.cx, na.cy, nb.cx, nb.cy);
+    g.addColorStop(0, na.color + '44');
+    g.addColorStop(1, nb.color + '44');
+    ctx.beginPath(); ctx.moveTo(na.cx, na.cy); ctx.lineTo(nb.cx, nb.cy);
+    ctx.strokeStyle = g; ctx.lineWidth = 1; ctx.stroke();
+  });
+
+  nodes.forEach(n => {
+    ctx.beginPath(); ctx.arc(n.cx, n.cy, n.r + 8, 0, Math.PI*2);
+    ctx.fillStyle = n.color + '12'; ctx.fill();
+    ctx.beginPath(); ctx.arc(n.cx, n.cy, n.r, 0, Math.PI*2);
+    ctx.fillStyle = n.color + '22'; ctx.fill();
+    ctx.strokeStyle = n.color + '66'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = n.color;
+    ctx.font = `${Math.max(9, n.r * 0.45)}px 'DM Mono', 'Courier New', monospace`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(n.label, n.cx, n.cy);
+  });
+
+  const edgeIdx = Math.floor(t * 0.5) % EDGES.length;
+  const [ea, eb] = EDGES[edgeIdx];
+  const frac = (t * 0.5) % 1;
+  ctx.beginPath();
+  ctx.arc(
+    nodes[ea].cx + (nodes[eb].cx - nodes[ea].cx) * frac,
+    nodes[ea].cy + (nodes[eb].cy - nodes[ea].cy) * frac,
+    4, 0, Math.PI*2
+  );
+  ctx.fillStyle = '#c84b2f'; ctx.fill();
+
+  ctx.restore();
+  t += 0.016;
+  requestAnimationFrame(drawMap);
+}
+drawMap();
+</script>
+</body>
+</html>
